@@ -532,6 +532,23 @@
     margin-top:34px; font-size:.7rem; color:#8a7d84; letter-spacing:.1em;
     opacity:0; animation:introFadeUp .9s ease 1.1s forwards;
   }
+  .intro-skip-btn{
+    margin-top:34px;
+    background:none;
+    border:1px solid rgba(201,166,107,.4);
+    color:var(--gold-soft);
+    padding:9px 20px;
+    border-radius:24px;
+    font-family:'Sarabun', sans-serif;
+    font-size:.8rem;
+    letter-spacing:.04em;
+    cursor:pointer;
+    opacity:0;
+    animation:introFadeUp .9s ease 1.1s forwards;
+    transition:background .2s ease, transform .15s ease;
+  }
+  .intro-skip-btn:hover{ background:rgba(201,166,107,.12); }
+  .intro-skip-btn:active{ transform:scale(.97); }
 </style>
 </head>
 <body>
@@ -542,7 +559,7 @@
     <div class="intro-brand">NOVELS<span class="intro-x">×</span></div>
     <div class="intro-brand-sub">บริษัทวัดสะอาด ท่านญา กับ คุณชายอ้วน</div>
     <div class="intro-loading"><span></span><span></span><span></span></div>
-    <div class="intro-skip">แตะที่ใดก็ได้เพื่อข้าม</div>
+    <button type="button" class="intro-skip-btn" id="introSkipBtn">ข้ามอินโทร →</button>
   </div>
 </div>
 
@@ -597,17 +614,4 @@
       <select class="chapter-select" id="chapterSelect"></select>
       <div class="nav-btns">
         <button class="nav-btn" id="prevChapBtn">← ก่อนหน้า</button>
-        <button class="nav-btn" id="nextChapBtn">ถัดไป →</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- LOCK OVERLAY -->
-<div class="overlay" id="lockOverlay">
-  <div class="panel" style="max-width:380px;">
-    <button class="panel-close" id="closeLockBtn" aria-label="ปิด">✕</button>
-    <div class="lock-seal">
-      <svg viewBox="0 0 24 24"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm0 2a3 3 0 0 1 3 3v3H9V6a3 3 0 0 1 3-3zm0 10a1.6 1.6 0 0 1 .9 2.9l.3 1.9h-2.4l.3-1.9A1.6 1.6 0 0 1 12 13z"/></svg>
-    </div>
-    <div 
+        <button class="nav-btn" id="nextChapBtn">ถ
