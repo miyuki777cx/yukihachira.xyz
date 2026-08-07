@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ชั้นหนังสือ — นิยาย</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#221925;
+    --bg-alt:#2b1f2e;
+    --paper:#f2e9d8;
+    --paper-2:#e8dcc3;
+    --ink:#2a2118;
+    --ink-soft:#5a4f42;
+    --gold:#c9a66b;
+    --gold-soft:#e3cfa0;
+    --teal:#3f5e56;
+    --wax:#7c3b3b;
+    --wax-dark:#5e2b2b;
+    --radius:10px;
+    --shadow-deep: 0 18px 40px rgba(0,0,0,.45);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:
+      radial-gradient(ellipse at top, #2f2233 0%, var(--bg) 55%),
+      var(--bg);
+    color:var(--paper);
+    font-family:'Sarabun', sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  h1,h2,h3,.display{ font-family:'Noto Serif Thai', serif; }
+
+  a{color:inherit;}
+
+  /* ---------- header ---------- */
+  .site-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:26px clamp(20px,5vw,56px);
+    border-bottom:1px solid rgba(201,166,107,.18);
+  }
+  .brand{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+  }
+  .brand .mark{
+    font-family:'Noto Serif Thai', serif;
+    font-weight:700;
+    font-size:1.6rem;
+    letter-spacing:.02em;
+  }
+  .brand .sub{
+    font-size:.78rem;
+    color:var(--gold-soft);
+    letter-spacing:.12em;
+    opacity:.75;
+  }
+
+  /* wax seal button */
+  .seal-btn{
+    --size:52px;
+    width:var(--size);
+    height:var(--size);
+    border-radius:50%;
+    border:none;
+    cursor:pointer;
+    position:relative;
+    background:
+      radial-gradient(circle at 32% 28%, #a24d4d 0%, var(--wax) 45%, var(--wax-dark) 100%);
+    box-shadow: inset 0 -4px 6px rgba(0,0,0,.35), inset 0 3px 5px rgba(255,255,255,.15), 0 6px 14px rgba(0,0,0,.4);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:transform .25s ease, box-shadow .25s ease;
+    flex-shrink:0;
+  }
+  .seal-btn:hover{ transform:scale(1.06) rotate(-3deg); }
+  .seal-btn:focus-visible{ outline:2px solid var(--gold); outline-offset:3px; }
+  .seal-btn svg{ width:22px; height:22px; fill:var(--gold-soft); opacity:.9; }
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding:clamp(40px,8vw,84px) clamp(20px,5vw,56px) clamp(20px,4vw,40px);
+    max-width:1100px;
+  }
+  .hero .eyebrow{
+    font-size:.78rem;
+    letter-spacing:.22em;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:14px;
+    display:block;
+  }
+  .hero h1{
+    font-size:clamp(2.2rem, 5vw, 3.6rem);
+    line-height:1.2;
+    font-weight:600;
+    color:var(--paper);
+    max-width:14ch;
+  }
+  .hero p{
+    margin-top:16px;
+    max-width:60ch;
+    color:#cfc2c8;
+    font-size:1.02rem;
+    line-height:1.75;
+    font-weight:300;
+  }
+
+  /* ---------- shelf ---------- */
+  .shelf-section{
+    padding:20px clamp(20px,5vw,56px) 100px;
+  }
+  .shelf-header{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:28px;
+    border-bottom:1px solid rgba(201,166,107,.18);
+    padding-bottom:14px;
+  }
+  .shelf-header h2{ font-size:1.3rem; font-weight:600; }
+  .shelf-count{ font-size:.85rem; color:var(--gold-soft); opacity:.8; }
+
+  .shelf-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(190px,1fr));
+    gap:28px 22px;
+  }
+
+  .book{
+    background:none;
+    border:none;
+    padding:0;
+    cursor:pointer;
+    text-align:left;
+    color:inherit;
+    font-family:inherit;
+    perspective:800px;
+  }
+  .book:focus-visible .cover{ outline:2px solid var(--gold); outline-offset:3px; }
+
+  .cover{
+    position:relative;
+    border-radius:4px 8px 8px 4px;
+    height:250px;
+    padding:20px 18px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    box-shadow:
+      var(--shadow-deep),
+      -6px 0 0 -2px rgba(0,0,0,.25) inset;
+    transition:transform .35s cubic-bezier(.2,.8,.3,1), box-shadow .35s ease;
+    transform-style:preserve-3d;
+  }
+  .cover::before{
+    /* spine */
+    content:"";
+    position:absolute;
+    left:0; top:0; bottom:0;
+    width:10px;
+    background:rgba(0,0,0,.22);
+    border-radius:4px 0 0 4px;
+    z-index:2;
+  }
+  .cover.has-image{
+    background-size:cover;
+    background-position:center;
+  }
+  .cover.has-image::after{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(0,0,0,.05) 0%, rgba(0,0,0,.15) 45%, rgba(0,0,0,.72) 100%);
+    border-radius:inherit;
+  }
+  .cover > *{ position:relative; z-index:1; }
+  .book:hover .cover, .book:focus-visible .cover{
+    transform: translateY(-8px) rotate(-1.2deg);
+    box-shadow: 0 26px 46px rgba(0,0,0,.5);
+  }
+
+  .cover .genre-tag{
+    align-self:flex-start;
+    font-size:.68rem;
+    letter-spacing:.08em;
+    padding:3px 9px;
+    border-radius:20px;
+    background:rgba(0,0,0,.18);
+    color:rgba(255,255,255,.9);
+  }
+  .cover .cover-title{
+    font-family:'Noto Serif Thai', serif;
+    font-weight:600;
+    font-size:1.12rem;
+    line-height:1.35;
+    color:#fff;
+    text-shadow:0 2px 6px rgba(0,0,0,.3);
+  }
+  .cover .cover-meta{
+    font-size:.74rem;
+    color:rgba(255,255,255,.75);
+  }
+
+  .book-caption{
+    margin-top:12px;
+    font-size:.9rem;
+    color:#d8ccd1;
+  }
+  .book-caption .author{
+    display:block;
+    font-size:.76rem;
+    color:var(--gold-soft);
+    opacity:.8;
+    margin-top:2px;
+  }
+
+  .empty-state{
+    grid-column:1/-1;
+    border:1px dashed rgba(201,166,107,.35);
+    border-radius:var(--radius);
+    padding:56px 24px;
+    text-align:center;
+    color:#cbb9c2;
+  }
+  .empty-state .display{ font-size:1.2rem; margin-bottom:8px; color:var(--paper); }
+
+  /* ---------- overlays shared ---------- */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(10,6,12,.72);
+    backdrop-filter:blur(3px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:100;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease;
+  }
+  .overlay.open{ opacity:1; pointer-events:auto; }
+
+  .panel{
+    background:var(--bg-alt);
+    border:1px solid rgba(201,166,107,.25);
+    border-radius:14px;
+    max-width:460px;
+    width:100%;
+    padding:34px 30px;
+    box-shadow:var(--shadow-deep);
+    position:relative;
+  }
+  .panel-close{
+    position:absolute; top:14px; right:14px;
+    background:none; border:none; color:var(--gold-soft);
+    font-size:1.3rem; cursor:pointer; opacity:.7; line-height:1;
+    padding:6px;
+  }
+  .panel-close:hover{ opacity:1; }
+
+  /* seal-lock modal */
+  .lock-seal{
+    width:70px; height:70px; border-radius:50%; margin:0 auto 20px;
+    background: radial-gradient(circle at 32% 28%, #a24d4d 0%, var(--wax) 45%, var(--wax-dark) 100%);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: inset 0 -4px 8px rgba(0,0,0,.35), inset 0 3px 6px rgba(255,255,255,.15);
+  }
+  .lock-seal svg{ width:28px; height:28px; fill:var(--gold-soft); }
+  .lock-title{ text-align:center; font-size:1.15rem; margin-bottom:6px; }
+  .lock-sub{ text-align:center; font-size:.85rem; color:#c9bcc3; margin-bottom:22px; }
+
+  input[type="password"], input[type="text"], textarea, select{
+    width:100%;
+    background:#1a1220;
+    border:1px solid rgba(201,166,107,.28);
+    color:var(--paper);
+    border-radius:8px;
+    padding:11px 13px;
+    font-family:'Sarabun', sans-serif;
+    font-size:.95rem;
+  }
+  input:focus-visible, textarea:focus-visible, select:focus-visible{
+    outline:2px solid var(--gold); outline-offset:1px;
+  }
+  textarea{ resize:vertical; min-height:110px; line-height:1.6; }
+
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-size:.8rem; color:var(--gold-soft); margin-bottom:6px; letter-spacing:.03em; }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    gap:8px;
+    padding:11px 20px;
+    border-radius:8px;
+    border:none;
+    cursor:pointer;
+    font-family:'Sarabun', sans-serif;
+    font-size:.92rem;
+    font-weight:500;
+    transition:transform .15s ease, filter .15s ease;
+  }
+  .btn:hover{ filter:brightness(1.08); }
+  .btn:active{ transform:scale(.98); }
+  .btn-primary{ background:var(--gold); color:#2a1f16; width:100%; }
+  .btn-ghost{ background:transparent; border:1px solid rgba(201,166,107,.4); color:var(--gold-soft); }
+  .btn-danger{ background:rgba(124,59,59,.25); color:#e7b8b8; border:1px solid rgba(124,59,59,.5); }
+  .btn-sm{ padding:7px 12px; font-size:.8rem; }
+
+  .lock-error{
+    color:#e7a3a3; font-size:.82rem; text-align:center; margin-top:10px; min-height:18px;
+  }
+
+  /* admin panel */
+  .admin-panel{ max-width:720px; max-height:86vh; overflow-y:auto; }
+  .admin-tabs{ display:flex; gap:8px; margin-bottom:22px; border-bottom:1px solid rgba(201,166,107,.2); }
+  .admin-tab{
+    background:none; border:none; color:#bdaeb5; padding:10px 4px; cursor:pointer;
+    font-family:'Sarabun', sans-serif; font-size:.92rem; border-bottom:2px solid transparent;
+  }
+  .admin-tab.active{ color:var(--gold); border-color:var(--gold); }
+  .admin-view{ display:none; }
+  .admin-view.active{ display:block; }
+
+  .admin-list-item{
+    display:flex; justify-content:space-between; align-items:flex-start; gap:12px;
+    padding:14px 0; border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .admin-list-item .info h4{ font-family:'Noto Serif Thai',serif; font-size:1rem; margin-bottom:3px; }
+  .admin-list-item .info p{ font-size:.78rem; color:#aa9ba3; }
+  .admin-list-item .actions{ display:flex; gap:6px; flex-shrink:0; flex-wrap:wrap; }
+
+  .chapter-row{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:.82rem; color:#cbb9c2; padding:6px 0; border-bottom:1px dashed rgba(255,255,255,.08);
+  }
+
+  /* reading view */
+  .reader-overlay{ align-items:stretch; padding:0; background:rgba(10,6,12,.85); }
+  .reader{
+    background:var(--paper);
+    color:var(--ink);
+    width:100%; max-width:900px; margin:0 auto;
+    display:flex; flex-direction:column;
+    height:100%;
+  }
+  .reader-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 28px;
+    border-bottom:1px solid rgba(42,33,24,.15);
+    background:var(--paper-2);
+  }
+  .reader-header .titles{ min-width:0; }
+  .reader-header h3{ font-size:1.05rem; font-weight:600; }
+  .reader-header .chap-name{ font-size:.8rem; color:var(--ink-soft); margin-top:2px; }
+  .reader-close{
+    background:none; border:none; color:var(--ink-soft); font-size:1.4rem; cursor:pointer; padding:6px;
+  }
+  .reader-body{
+    flex:1; overflow-y:auto; padding:clamp(24px,5vw,60px);
+  }
+  .reader-body .chapter-title{
+    font-family:'Noto Serif Thai', serif; font-size:1.5rem; margin-bottom:22px; font-weight:600;
+  }
+  .reader-body .chapter-content{
+    font-size:1.05rem; line-height:2; white-space:pre-wrap; max-width:70ch; margin:0 auto;
+  }
+  .no-chapters{ text-align:center; color:var(--ink-soft); padding:60px 20px; }
+
+  .reader-footer{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:16px 28px; border-top:1px solid rgba(42,33,24,.15); background:var(--paper-2);
+    flex-wrap:wrap;
+  }
+  .chapter-select{
+    flex:1; min-width:140px;
+    background:#fff; color:var(--ink); border:1px solid rgba(42,33,24,.2);
+    border-radius:6px; padding:9px 10px; font-family:'Sarabun',sans-serif; font-size:.85rem;
+  }
+  .nav-btns{ display:flex; gap:8px; }
+  .nav-btn{
+    background:var(--ink); color:var(--paper); border:none; border-radius:6px;
+    padding:9px 14px; font-size:.82rem; cursor:pointer;
+  }
+  .nav-btn:disabled{ opacity:.35; cursor:not-allowed; }
+
+  /* reader theme toggle + progress */
+  .reader-theme-btn{
+    background:none; border:1px solid rgba(42,33,24,.25); color:var(--ink-soft);
+    border-radius:20px; padding:6px 13px; font-size:.75rem; cursor:pointer;
+    display:flex; align-items:center; gap:6px; flex-shrink:0;
+    transition:background .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .reader-theme-btn svg{ width:14px; height:14px; fill:currentColor; flex-shrink:0; }
+
+  .reader-progress{
+    position:sticky; top:0; left:0; height:3px; width:100%;
+    background:rgba(42,33,24,.08); z-index:5;
+  }
+  .reader-progress-bar{
+    height:100%; width:0%; background:var(--gold); transition:width .1s linear;
+  }
+
+  @keyframes chapFade{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
+  .chapter-fade{ animation:chapFade .45s ease; }
+
+  /* dark reading theme */
+  .reader.dark-mode{ background:#1b1420; color:#ece3d8; }
+  .reader.dark-mode .reader-header,
+  .reader.dark-mode .reader-footer{ background:#241a2b; border-color:rgba(201,166,107,.16); }
+  .reader.dark-mode .reader-header h3{ color:#f2e9d8; }
+  .reader.dark-mode .reader-header .chap-name{ color:#b6a6ae; }
+  .reader.dark-mode .reader-close{ color:#cdbcc4; }
+  .reader.dark-mode .chapter-title{ color:#f2e9d8; }
+  .reader.dark-mode .chapter-content{ color:#e6dcd0; }
+  .reader.dark-mode .no-chapters{ color:#a99aa2; }
+  .reader.dark-mode .reader-theme-btn{ border-color:rgba(201,166,107,.3); color:#e3cfa0; }
+  .reader.dark-mode .chapter-select{ background:#241a2b; color:#f2e9d8; border-color:rgba(201,166,107,.25); }
+  .reader.dark-mode .nav-btn{ background:var(--gold); color:#241a2b; }
+  .reader.dark-mode .reader-progress{ background:rgba(255,255,255,.07); }
+
+  /* toast */
+  .toast{
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:#1a1220; border:1px solid rgba(201,166,107,.4); color:var(--paper);
+    padding:12px 20px; border-radius:8px; font-size:.88rem;
+    box-shadow:var(--shadow-deep);
+    opacity:0; pointer-events:none; transition:all .3s ease; z-index:200;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  footer.site-footer{
+    text-align:center; padding:26px; font-size:.76rem; color:#8a7d84;
+    border-top:1px solid rgba(201,166,107,.12);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; animation:none !important; }
+  }
+
+  @media (max-width:520px){
+    .shelf-grid{ grid-template-columns:repeat(auto-fill, minmax(140px,1fr)); }
+    .cover{ height:210px; padding:16px 14px; }
+  }
+
+  /* ---------- brand badge ---------- */
+  .brand-badge-wrap{
+    display:flex;
+    justify-content:center;
+    padding:22px 20px 4px;
+  }
+  .brand-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+    padding:10px 22px;
+    border:1px solid rgba(201,166,107,.3);
+    border-radius:999px;
+    background:linear-gradient(135deg, rgba(201,166,107,.08), rgba(201,166,107,.02));
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+  }
+  .brand-badge-icon{ font-size:1.3rem; line-height:1; flex-shrink:0; }
+  .brand-badge-text{
+    font-family:'Noto Serif Thai', serif;
+    font-weight:700;
+    font-size:1.05rem;
+    letter-spacing:.04em;
+    color:var(--paper);
+    white-space:nowrap;
+  }
+  .brand-badge-x{ color:var(--gold); font-weight:400; margin:0 6px; }
+  .brand-badge-sub{
+    font-family:'Sarabun', sans-serif;
+    font-weight:400;
+    font-size:.82rem;
+    letter-spacing:.02em;
+    color:var(--gold-soft);
+  }
+  @media (max-width:480px){
+    .brand-badge{ flex-wrap:wrap; justify-content:center; text-align:center; padding:12px 18px; }
+    .brand-badge-text{ white-space:normal; }
+  }
+</style>
+</head>
+<body>
+
+<div class="brand-badge-wrap">
+  <div class="brand-badge">
+    <span class="brand-badge-icon">📖</span>
+    <span class="brand-badge-text">NOVELS<span class="brand-badge-x">×</span><span class="brand-badge-sub">บริษัทวัดสะอาด ท่านญา กับ คุณชายอ้วน</span></span>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="brand">
+    <span class="mark">ชั้นหนังสือ</span>
+    <span class="sub">THE SHELF</span>
+  </div>
+  <button class="seal-btn" id="openLockBtn" aria-label="เข้าสู่ระบบเจ้าของเว็บ" title="สำหรับเจ้าของเว็บ">
+    <svg viewBox="0 0 24 24"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm0 2a3 3 0 0 1 3 3v3H9V6a3 3 0 0 1 3-3zm0 10a1.6 1.6 0 0 1 .9 2.9l.3 1.9h-2.4l.3-1.9A1.6 1.6 0 0 1 12 13z"/></svg>
+  </button>
+</header>
+
+<section class="hero">
+  <span class="eyebrow">คลังเรื่องราวส่วนตัว</span>
+  <h1>ที่ที่ทุกตอนของนิยาย<br>ถูกเก็บไว้อ่านซ้ำได้เสมอ</h1>
+  <p>รวมนิยายที่เขียนและคัดสรรมาเอง อัปเดตตอนใหม่เรื่อย ๆ — เลือกเล่มที่สนใจแล้วเริ่มอ่านได้ทันที</p>
+</section>
+
+<section class="shelf-section">
+  <div class="shelf-header">
+    <h2>เรื่องทั้งหมด</h2>
+    <span class="shelf-count" id="shelfCount">กำลังโหลด…</span>
+  </div>
+  <div class="shelf-grid" id="shelfGrid"></div>
+</section>
+
+<footer class="site-footer">เขียนและเรียบเรียงโดยเจ้าของเว็บ · เนื้อหาถูกเก็บไว้อย่างถาวร</footer>
+
+<!-- READER OVERLAY -->
+<div class="overlay reader-overlay" id="readerOverlay">
+  <div class="reader">
+    <div class="reader-header">
+      <div class="titles">
+        <h3 id="readerNovelTitle">—</h3>
+        <div class="chap-name" id="readerChapterLabel">—</div>
+      </div>
+      <button class="reader-theme-btn" id="readerThemeBtn" type="button">
+        <svg id="readerThemeIcon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+        <span id="readerThemeLabel">ธีมมืด</span>
+      </button>
+      <button class="reader-close" id="closeReaderBtn" aria-label="ปิด">✕</button>
+    </div>
+    <div class="reader-progress"><div class="reader-progress-bar" id="readerProgressBar"></div></div>
+    <div class="reader-body" id="readerBody">
+      <div id="readerContentWrap">
+        <h4 class="chapter-title" id="readerChapterTitle"></h4>
+        <p class="chapter-content" id="readerChapterContent"></p>
+      </div>
+    </div>
+    <div class="reader-footer">
+      <select class="chapter-select" id="chapterSelect"></select>
+      <div class="nav-btns">
+        <button class="nav-btn" id="prevChapBtn">← ก่อนหน้า</button>
+        <button class="nav-btn" id="nextChapBtn">ถัดไป →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOCK OVERLAY -->
+<div class="overlay" id="lockOverlay">
+  <div class="panel" style="max-width:380px;">
+    <button class="panel-close" id="closeLockBtn" aria-label="ปิด">✕</button>
+    <div class="lock-seal">
+      <svg viewBox="0 0 24 24"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm0 2a3 3 0 0 1 3 3v3H9V6a3 3 0 0 1 3-3zm0 10a1.6 1.6 0 0 1 .9 2.9l.3 1.9h-2.4l.3-1.9A1.6 1.6 0 0 1 12 13z"/></svg>
+    </div>
+    <div class="lock-title display">พื้นที่เจ้าของเว็บ</div>
+    <div class="lock-sub">กรอกรหัสผ่านเพื่อเปิดผนึกและจัดการนิยาย</div>
+    <form id="lockForm">
+      <div class="field">
+        <label for="lockPassword">รหัสผ่าน</label>
+        <input type="password" id="lockPassword" inputmode="numeric" autocomplete="off" placeholder="••••••">
+      </div>
+      <button type="submit" class="btn btn-primary">เปิดผนึก</button>
+      <div class="lock-error" id="lockError"></div>
+    </form>
+  </div>
+</div>
+
+<!-- ADMIN OVERLAY -->
+<div class="overlay" id="adminOverlay">
+  <div class="panel admin-panel">
+    <button class="panel-close" id="closeAdminBtn" aria-label="ปิด">✕</button>
+    <div class="lock-title display" style="text-align:left; margin-bottom:2px;">จัดการนิยาย</div>
+    <div class="lock-sub" style="text-align:left; margin-bottom:14px;">เพิ่มเรื่องใหม่ อัปตอน หรือจัดการเรื่องที่มีอยู่</div>
+
+    <div style="background:rgba(201,166,107,.08); border:1px solid rgba(201,166,107,.25); border-radius:8px; padding:12px 14px; margin-bottom:18px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+      <span style="font-size:.8rem; color:#d8c9a6; line-height:1.5;">การแก้ไขจะถูกเก็บไว้ในเบราว์เซอร์นี้ก่อน<br>กด "ดาวน์โหลด" แล้วเอาไฟล์ไปอัปทับบน GitHub เพื่อให้ทุกคนเห็น</span>
+      <button type="button" class="btn btn-ghost btn-sm" id="downloadJsonBtn" style="white-space:nowrap;">⬇ ดาวน์โหลด novels.json</button>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="new">+ เรื่องใหม่</button>
+      <button class="admin-tab" data-tab="manage">จัดการเรื่องเดิม</button>
+    </div>
+
+    <!-- new novel form -->
+    <div class="admin-view active" id="tabNew">
+      <form id="newNovelForm">
+        <div class="field">
+          <label for="nvTitle">ชื่อเรื่อง *</label>
+          <input type="text" id="nvTitle" required placeholder="เช่น ผลิบานในสายลม">
+        </div>
+        <div class="field">
+          <label for="nvGenre">แนวเรื่อง</label>
+          <input type="text" id="nvGenre" placeholder="เช่น แฟนตาซี, ดราม่า, สืบสวน">
+        </div>
+        <div class="field">
+          <label for="nvCoverInput">ภาพปก (เลือกจากเครื่อง)</label>
+          <input type="file" id="nvCoverInput" accept="image/*">
+          <div id="nvCoverPreviewWrap" style="display:none; margin-top:10px;">
+            <img id="nvCoverPreview" alt="ตัวอย่างภาพปก" style="width:100px; height:130px; object-fit:cover; border-radius:6px; box-shadow:var(--shadow-deep);">
+            <button type="button" class="btn btn-ghost btn-sm" id="nvCoverClearBtn" style="margin-top:8px;">ลบภาพปก</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="nvSynopsis">เรื่องย่อ</label>
+          <textarea id="nvSynopsis" placeholder="เกริ่นเรื่องคร่าว ๆ ให้ผู้อ่านเห็นภาพ"></textarea>
+        </div>
+        <div class="field">
+          <label for="nvChapTitle">ชื่อตอนแรก</label>
+          <input type="text" id="nvChapTitle" placeholder="เช่น ตอนที่ 1: จุดเริ่มต้น">
+        </div>
+        <div class="field">
+          <label for="nvChapContent">เนื้อหาตอนแรก</label>
+          <textarea id="nvChapContent" style="min-height:160px" placeholder="เขียนเนื้อหาตอนแรกที่นี่ (จะเพิ่มตอนต่อ ๆ ไปได้ในแท็บ 'จัดการเรื่องเดิม')"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">เผยแพร่เรื่องใหม่</button>
+      </form>
+    </div>
+
+    <!-- manage existing -->
+    <div class="admin-view" id="tabManage">
+      <div id="adminList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT NOVEL DETAILS OVERLAY -->
+<div class="overlay" id="editNovelOverlay">
+  <div class="panel" style="max-width:500px;">
+    <button class="panel-close" id="closeEditNovelBtn" aria-label="ปิด">✕</button>
+    <div class="lock-title display" style="text-align:left;">แก้ไขข้อมูลนิยาย</div>
+    <div class="lock-sub" style="text-align:left; margin-bottom:18px;">ปรับปรุงชื่อเรื่อง แนวเรื่อง เรื่องย่อ หรือภาพปก</div>
+    <form id="editNovelForm">
+      <input type="hidden" id="editNvId">
+      <div class="field">
+        <label for="editNvTitle">ชื่อเรื่อง *</label>
+        <input type="text" id="editNvTitle" required>
+      </div>
+      <div class="field">
+        <label for="editNvGenre">แนวเรื่อง</label>
+        <input type="text" id="editNvGenre">
+      </div>
+      <div class="field">
+        <label for="editNvCoverInput">เปลี่ยนภาพปก</label>
+        <input type="file" id="editNvCoverInput" accept="image/*">
+        <div id="editNvCoverPreviewWrap" style="margin-top:10px;">
+          <img id="editNvCoverPreview" alt="ตัวอย่างภาพปก" style="width:100px; height:130px; object-fit:cover; border-radius:6px; box-shadow:var(--shadow-deep); display:none;">
+          <button type="button" class="btn btn-ghost btn-sm" id="editNvCoverClearBtn" style="margin-top:8px; display:none;">ลบภาพปก</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="editNvSynopsis">เรื่องย่อ</label>
+        <textarea id="editNvSynopsis"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">บันทึกการแก้ไข</button>
+    </form>
+  </div>
+</div>
+
+<!-- ADD CHAPTER (nested) -->
+<div class="overlay" id="chapterOverlay">
+  <div class="panel" style="max-width:480px;">
+    <button class="panel-close" id="closeChapterBtn" aria-label="ปิด">✕</button>
+    <div class="lock-title display" style="text-align:left;">เพิ่มตอนใหม่</div>
+    <div class="lock-sub" style="text-align:left; margin-bottom:18px;" id="chapterNovelName">—</div>
+    <form id="newChapterForm">
+      <div class="field">
+        <label for="chTitle">ชื่อตอน</label>
+        <input type="text" id="chTitle" placeholder="เช่น ตอนที่ 2: จุดหักเห">
+      </div>
+      <div class="field">
+        <label for="chContent">เนื้อหา</label>
+        <textarea id="chContent" style="min-height:180px" placeholder="เขียนเนื้อหาตอนนี้"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">เพิ่มตอน</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'shelf-novels-v1';
+  const PASSWORD = '210451';
+  const COVER_PALETTES = [
+    ['#3f5e56','#2c4239'], ['#7c3b3b','#5e2b2b'], ['#4a3f6b','#352b52'],
+    ['#8a6a2f','#6b501f'], ['#2f5a72','#213f52'], ['#6b3f5e','#4c2c43']
+  ];
+
+  let novels = [];
+  let isUnlocked = false;
+  let readerState = { novelId:null, chapterIndex:0 };
+  let chapterTargetNovelId = null;
+
+  const $ = (sel) => document.querySelector(sel);
+  const shelfGrid = $('#shelfGrid');
+  const shelfCount = $('#shelfCount');
+
+  function paletteFor(str){
+    let h = 0;
+    for (let i=0;i<str.length;i++) h = str.charCodeAt(i) + ((h<<5)-h);
+    return COVER_PALETTES[Math.abs(h) % COVER_PALETTES.length];
+  }
+
+  function showToast(msg){
+    const t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(()=> t.classList.remove('show'), 2600);
+  }
+
+  function escapeHtml(str){
+    return (str||'').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+  }
+
+  // ---------- storage ----------
+  async function loadNovels(){
+    let fileData = [];
+    try{
+      const res = await fetch('novels.json', { cache: 'no-store' });
+      if (res.ok) fileData = await res.json();
+    }catch(e){ /* ไม่มีไฟล์ก็ไม่เป็นไร เริ่มจากค่าว่าง */ }
+
+    let localData = null;
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) localData = JSON.parse(raw);
+    }catch(e){ localData = null; }
+
+    novels = localData !== null ? localData : fileData;
+    renderShelf();
+  }
+
+  function saveNovels(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(novels));
+    }catch(e){
+      showToast('บันทึกลงเครื่องไม่สำเร็จ');
+    }
+  }
+
+  function downloadNovelsJson(){
+    const blob = new Blob([JSON.stringify(novels, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'novels.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('ดาวน์โหลด novels.json แล้ว — อย่าลืมอัปทับไฟล์เดิมบน GitHub');
+  }
+
+  // ---------- shelf render ----------
+  function renderShelf(){
+    shelfGrid.innerHTML = '';
+    if (!novels.length){
+      shelfGrid.innerHTML = `
+        <div class="empty-state">
+          <div class="display">ชั้นหนังสือยังว่างอยู่</div>
+          <div>เจ้าของเว็บยังไม่ได้วางเรื่องใดไว้บนชั้นนี้ กลับมาดูใหม่อีกครั้ง</div>
+        </div>`;
+      shelfCount.textContent = '0 เรื่อง';
+      return;
+    }
+    shelfCount.textContent = novels.length + ' เรื่อง';
+    novels.forEach(nv => {
+      const chapCount = (nv.chapters||[]).length;
+      const btn = document.createElement('button');
+      btn.className = 'book';
+      let coverStyle, coverClass = 'cover';
+      if (nv.coverImage){
+        coverStyle = `background-image:url('${nv.coverImage}');`;
+        coverClass += ' has-image';
+      } else {
+        const [c1,c2] = paletteFor(nv.title || nv.id);
+        coverStyle = `background:linear-gradient(155deg, ${c1}, ${c2});`;
+      }
+      btn.innerHTML = `
+        <div class="${coverClass}" style="${coverStyle}">
+          <span class="genre-tag">${escapeHtml(nv.genre || 'นิยาย')}</span>
+          <div>
+            <div class="cover-title">${escapeHtml(nv.title)}</div>
+            <div class="cover-meta">${chapCount} ตอน</div>
+          </div>
+        </div>
+        <div class="book-caption">${escapeHtml(nv.synopsis || '').slice(0,64)}${(nv.synopsis||'').length>64?'…':''}
+          <span class="author">โดยเจ้าของเว็บ</span>
+        </div>`;
+      btn.addEventListener('click', () => openReader(nv.id, 0));
+      shelfGrid.appendChild(btn);
+    });
+  }
+
+  // ---------- reader ----------
+  function openReader(novelId, chapterIndex){
+    readerState = { novelId, chapterIndex };
+    renderReader();
+    $('#readerOverlay').classList.add('open');
+  }
+  function renderReader(){
+    const nv = novels.find(n => n.id === readerState.novelId);
+    if (!nv) return;
+    $('#readerNovelTitle').textContent = nv.title;
+    const chapters = nv.chapters || [];
+    const sel = $('#chapterSelect');
+    sel.innerHTML = '';
+    chapters.forEach((c,i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = c.title || ('ตอนที่ ' + (i+1));
+      sel.appendChild(opt);
+    });
+    sel.value = readerState.chapterIndex;
+
+    if (!chapters.length){
+      $('#readerChapterLabel').textContent = 'ยังไม่มีตอน';
+      $('#readerContentWrap').innerHTML = '<div class="no-chapters">เรื่องนี้ยังไม่มีตอนให้อ่าน</div>';
+    } else {
+      const chap = chapters[readerState.chapterIndex] || chapters[0];
+      $('#readerChapterLabel').textContent = chap.title || ('ตอนที่ ' + (readerState.chapterIndex+1));
+      $('#readerChapterTitle').textContent = chap.title || ('ตอนที่ ' + (readerState.chapterIndex+1));
+      $('#readerChapterContent').textContent = chap.content || '';
+    }
+    $('#prevChapBtn').disabled = readerState.chapterIndex <= 0;
+    $('#nextChapBtn').disabled = readerState.chapterIndex >= chapters.length - 1;
+
+    const wrap = $('#readerContentWrap');
+    wrap.classList.remove('chapter-fade');
+    void wrap.offsetWidth;
+    wrap.classList.add('chapter-fade');
+
+    const body = $('#readerBody');
+    body.scrollTop = 0;
+    updateReaderProgress();
+  }
+
+  function updateReaderProgress(){
+    const body = $('#readerBody');
+    const bar = $('#readerProgressBar');
+    const max = body.scrollHeight - body.clientHeight;
+    const pct = max > 0 ? Math.min(100, (body.scrollTop / max) * 100) : 0;
+    bar.style.width = pct + '%';
+  }
+  $('#readerBody').addEventListener('scroll', updateReaderProgress);
+
+  function applyReaderTheme(theme){
+    const readerEl = document.querySelector('.reader');
+    const label = $('#readerThemeLabel');
+    const icon = $('#readerThemeIcon');
+    if (theme === 'dark'){
+      readerEl.classList.add('dark-mode');
+      label.textContent = 'ธีมสว่าง';
+      icon.innerHTML = '<path d="M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5a6 6 0 1 0 0 12 6 6 0 0 0 0-12zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z"/>';
+    } else {
+      readerEl.classList.remove('dark-mode');
+      label.textContent = 'ธีมมืด';
+      icon.innerHTML = '<path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/>';
+    }
+    try{ localStorage.setItem('reader-theme', theme); }catch(e){}
+  }
+  $('#readerThemeBtn').addEventListener('click', () => {
+    const isDark = document.querySelector('.reader').classList.contains('dark-mode');
+    applyReaderTheme(isDark ? 'light' : 'dark');
+  });
+  (function initReaderTheme(){
+    let saved = 'light';
+    try{ saved = localStorage.getItem('reader-theme') || 'light'; }catch(e){}
+    applyReaderTheme(saved);
+  })();
+
+  $('#chapterSelect').addEventListener('change', (e) => {
+    readerState.chapterIndex = parseInt(e.target.value, 10);
+    renderReader();
+  });
+  $('#prevChapBtn').addEventListener('click', () => {
+    if (readerState.chapterIndex > 0){ readerState.chapterIndex--; renderReader(); }
+  });
+  $('#nextChapBtn').addEventListener('click', () => {
+    const nv = novels.find(n => n.id === readerState.novelId);
+    if (nv && readerState.chapterIndex < (nv.chapters||[]).length - 1){ readerState.chapterIndex++; renderReader(); }
+  });
+  $('#closeReaderBtn').addEventListener('click', () => $('#readerOverlay').classList.remove('open'));
+
+  // ---------- lock ----------
+  $('#openLockBtn').addEventListener('click', () => {
+    if (isUnlocked){ openAdminPanel(); return; }
+    $('#lockPassword').value = '';
+    $('#lockError').textContent = '';
+    $('#lockOverlay').classList.add('open');
+    setTimeout(()=> $('#lockPassword').focus(), 50);
+  });
+  $('#closeLockBtn').addEventListener('click', () => $('#lockOverlay').classList.remove('open'));
+
+  $('#lockForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const val = $('#lockPassword').value.trim();
+    if (val === PASSWORD){
+      isUnlocked = true;
+      $('#lockOverlay').classList.remove('open');
+      openAdminPanel();
+    } else {
+      $('#lockError').textContent = 'รหัสผ่านไม่ถูกต้อง ลองอีกครั้ง';
+    }
+  });
+
+  // ---------- admin panel ----------
+  function openAdminPanel(){
+    renderAdminList();
+    $('#adminOverlay').classList.add('open');
+  }
+  $('#closeAdminBtn').addEventListener('click', () => $('#adminOverlay').classList.remove('open'));
+  $('#downloadJsonBtn').addEventListener('click', downloadNovelsJson);
+
+  document.querySelectorAll('.admin-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.admin-view').forEach(v => v.classList.remove('active'));
+      tab.classList.add('active');
+      $('#tab' + (tab.dataset.tab === 'new' ? 'New' : 'Manage')).classList.add('active');
+      if (tab.dataset.tab === 'manage') renderAdminList();
+    });
+  });
+
+  $('#newNovelForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const title = $('#nvTitle').value.trim();
+    if (!title){ showToast('กรุณากรอกชื่อเรื่อง'); return; }
+    const chapTitle = $('#nvChapTitle').value.trim();
+    const chapContent = $('#nvChapContent').value.trim();
+    const nv = {
+      id: 'nv_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
+      title,
+      genre: $('#nvGenre').value.trim(),
+      synopsis: $('#nvSynopsis').value.trim(),
+      coverImage: pendingNewCover || null,
+      chapters: chapContent ? [{ title: chapTitle || 'ตอนที่ 1', content: chapContent }] : []
+    };
+    novels.unshift(nv);
+    saveNovels();
+    renderShelf();
+    $('#newNovelForm').reset();
+    clearNewCoverPreview();
+    showToast('เผยแพร่ "' + title + '" แล้ว');
+  });
+
+  // ---------- image compressor ----------
+  let pendingNewCover = null;
+  let pendingEditCover = null;
+
+  function compressImageToDataUrl(file, maxDim, quality){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('อ่านไฟล์ไม่สำเร็จ'));
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject(new Error('เปิดไฟล์ภาพไม่สำเร็จ'));
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > height && width > maxDim){
+            height = Math.round(height * (maxDim / width));
+            width = maxDim;
+          } else if (height >= width && height > maxDim){
+            width = Math.round(width * (maxDim / height));
+            height = maxDim;
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function clearNewCoverPreview(){
+    pendingNewCover = null;
+    $('#nvCoverInput').value = '';
+    $('#nvCoverPreviewWrap').style.display = 'none';
+    $('#nvCoverPreview').src = '';
+  }
+
+  $('#nvCoverInput').addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    try{
+      pendingNewCover = await compressImageToDataUrl(file, 640, 0.82);
+      $('#nvCoverPreview').src = pendingNewCover;
+      $('#nvCoverPreviewWrap').style.display = 'block';
+    }catch(err){
+      showToast('อัปโหลดภาพไม่สำเร็จ ลองไฟล์อื่น');
+    }
+  });
+  $('#nvCoverClearBtn').addEventListener('click', clearNewCoverPreview);
+
+  // ---------- edit novel details modal ----------
+  function openEditNovelModal(novelId){
+    const nv = novels.find(n => n.id === novelId);
+    if (!nv) return;
+    $('#editNvId').value = nv.id;
+    $('#editNvTitle').value = nv.title || '';
+    $('#editNvGenre').value = nv.genre || '';
+    $('#editNvSynopsis').value = nv.synopsis || '';
+    
+    pendingEditCover = nv.coverImage || null;
+    const imgPreview = $('#editNvCoverPreview');
+    const clearBtn = $('#editNvCoverClearBtn');
+    
+    if (pendingEditCover){
+      imgPreview.src = pendingEditCover;
+      imgPreview.style.display = 'block';
+      clearBtn.style.display = 'inline-block';
+    } else {
+      imgPreview.src = '';
+      imgPreview.style.display = 'none';
+      clearBtn.style.display = 'none';
+    }
+    $('#editNvCoverInput').value = '';
+    $('#editNovelOverlay').classList.add('open');
+  }
+
+  $('#closeEditNovelBtn').addEventListener('click', () => $('#editNovelOverlay').classList.remove('open'));
+
+  $('#editNvCoverInput').addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    try{
+      pendingEditCover = await compressImageToDataUrl(file, 640, 0.82);
+      const imgPreview = $('#editNvCoverPreview');
+      const clearBtn = $('#editNvCoverClearBtn');
+      imgPreview.src = pendingEditCover;
+      imgPreview.style.display = 'block';
+      clearBtn.style.display = 'inline-block';
+    }catch(err){
+      showToast('อัปโหลดภาพไม่สำเร็จ ลองไฟล์อื่น');
+    }
+  });
+
+  $('#editNvCoverClearBtn').addEventListener('click', () => {
+    pendingEditCover = null;
+    $('#editNvCoverInput').value = '';
+    $('#editNvCoverPreview').src = '';
+    $('#editNvCoverPreview').style.display = 'none';
+    $('#editNvCoverClearBtn').style.display = 'none';
+  });
+
+  $('#editNovelForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const id = $('#editNvId').value;
+    const nv = novels.find(n => n.id === id);
+    if (!nv) return;
+
+    const title = $('#editNvTitle').value.trim();
+    if (!title){ showToast('กรุณากรอกชื่อเรื่อง'); return; }
+
+    nv.title = title;
+    nv.genre = $('#editNvGenre').value.trim();
+    nv.synopsis = $('#editNvSynopsis').value.trim();
+    nv.coverImage = pendingEditCover;
+
+    saveNovels();
+    renderShelf();
+    renderAdminList();
+    $('#editNovelOverlay').classList.remove('open');
+    showToast('แก้ไขข้อมูลเรื่อง "' + title + '" เรียบร้อยแล้ว');
+  });
+
+  // ---------- admin list ----------
+  function renderAdminList(){
+    const wrap = $('#adminList');
+    if (!novels.length){
+      wrap.innerHTML = '<div class="lock-sub" style="text-align:left;">ยังไม่มีเรื่องในระบบ ลองเพิ่มเรื่องใหม่ที่แท็บด้านซ้าย</div>';
+      return;
+    }
+    wrap.innerHTML = '';
+    novels.forEach(nv => {
+      const item = document.createElement('div');
+      item.className = 'admin-list-item';
+      const chaptersHtml = (nv.chapters||[]).map((c,i) => `
+        <div class="chapter-row">
+          <span>${escapeHtml(c.title || ('ตอนที่ '+(i+1)))}</span>
+          <button class="btn btn-ghost btn-sm" data-del-chap="${nv.id}|${i}">ลบตอน</button>
+        </div>`).join('') || '<div class="chapter-row"><span>ยังไม่มีตอน</span><span></span></div>';
+
+      const thumbHtml = nv.coverImage
+        ? `<img src="${nv.coverImage}" alt="ปกของ ${escapeHtml(nv.title)}" style="width:52px; height:68px; object-fit:cover; border-radius:5px; flex-shrink:0; box-shadow:var(--shadow-deep);">`
+        : `<div style="width:52px; height:68px; border-radius:5px; flex-shrink:0; background:rgba(201,166,107,.12); border:1px dashed rgba(201,166,107,.35);"></div>`;
+
+      item.innerHTML = `
+        <div class="info" style="flex:1; display:flex; gap:12px;">
+          ${thumbHtml}
+          <div style="flex:1; min-width:0;">
+            <h4>${escapeHtml(nv.title)}</h4>
+            <p>${(nv.chapters||[]).length} ตอน · ${escapeHtml(nv.genre || 'ไม่ระบุแนว')}</p>
+            <div style="margin-top:8px;">${chaptersHtml}</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn btn-ghost btn-sm" data-editnovel="${nv.id}">✏️ แก้ไขเรื่อง</button>
+          <button class="btn btn-ghost btn-sm" data-addchap="${nv.id}">+ เพิ่มตอน</button>
+          <button class="btn btn-danger btn-sm" data-delnovel="${nv.id}">ลบเรื่อง</button>
+        </div>`;
+      wrap.appendChild(item);
+    });
+
+    wrap.querySelectorAll('[data-editnovel]').forEach(btn => {
+      btn.addEventListener('click', () => openEditNovelModal(btn.dataset.editnovel));
+    });
+    wrap.querySelectorAll('[data-addchap]').forEach(btn => {
+      btn.addEventListener('click', () => openChapterModal(btn.dataset.addchap));
+    });
+    wrap.querySelectorAll('[data-delnovel]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const nv = novels.find(n => n.id === btn.dataset.delnovel);
+        if (!nv) return;
+        if (!confirm('ลบเรื่อง "' + nv.title + '" ทั้งหมด?')) return;
+        novels = novels.filter(n => n.id !== nv.id);
+        saveNovels();
+        renderShelf(); renderAdminList();
+        showToast('ลบเรื่องแล้ว');
+      });
+    });
+    wrap.querySelectorAll('[data-del-chap]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const [novelId, idxStr] = btn.dataset.delChap.split('|');
+        const idx = parseInt(idxStr, 10);
+        const nv = novels.find(n => n.id === novelId);
+        if (!nv) return;
+        nv.chapters.splice(idx, 1);
+        saveNovels();
+        renderShelf(); renderAdminList();
+        showToast('ลบตอนแล้ว');
+      });
+    });
+  }
+
+  // ---------- add chapter modal ----------
+  function openChapterModal(novelId){
+    chapterTargetNovelId = novelId;
+    const nv = novels.find(n => n.id === novelId);
+    $('#chapterNovelName').textContent = nv ? ('สำหรับเรื่อง: ' + nv.title) : '';
+    $('#chTitle').value = '';
+    $('#chContent').value = '';
+    $('#chapterOverlay').classList.add('open');
+  }
+  $('#closeChapterBtn').addEventListener('click', () => $('#chapterOverlay').classList.remove('open'));
+  $('#newChapterForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const nv = novels.find(n => n.id === chapterTargetNovelId);
+    if (!nv) return;
+    const content = $('#chContent').value.trim();
+    if (!content){ showToast('กรุณากรอกเนื้อหาตอน'); return; }
+    nv.chapters = nv.chapters || [];
+    nv.chapters.push({ title: $('#chTitle').value.trim() || ('ตอนที่ ' + (nv.chapters.length+1)), content });
+    saveNovels();
+    $('#chapterOverlay').classList.remove('open');
+    renderShelf(); renderAdminList();
+    showToast('เพิ่มตอนใหม่แล้ว');
+  });
+
+  // close overlays on backdrop click
+  document.querySelectorAll('.overlay').forEach(ov => {
+    ov.addEventListener('click', (e) => { if (e.target === ov) ov.classList.remove('open'); });
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') document.querySelectorAll('.overlay.open').forEach(ov => ov.classList.remove('open'));
+  });
+
+  loadNovels();
+})();
+</script>
+</body>
+</html>
