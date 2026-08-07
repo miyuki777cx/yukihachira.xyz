@@ -382,6 +382,41 @@
   }
   .nav-btn:disabled{ opacity:.35; cursor:not-allowed; }
 
+  /* reader theme toggle + progress */
+  .reader-theme-btn{
+    background:none; border:1px solid rgba(42,33,24,.25); color:var(--ink-soft);
+    border-radius:20px; padding:6px 13px; font-size:.75rem; cursor:pointer;
+    display:flex; align-items:center; gap:6px; flex-shrink:0;
+    transition:background .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .reader-theme-btn svg{ width:14px; height:14px; fill:currentColor; flex-shrink:0; }
+
+  .reader-progress{
+    position:sticky; top:0; left:0; height:3px; width:100%;
+    background:rgba(42,33,24,.08); z-index:5;
+  }
+  .reader-progress-bar{
+    height:100%; width:0%; background:var(--gold); transition:width .1s linear;
+  }
+
+  @keyframes chapFade{ from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
+  .chapter-fade{ animation:chapFade .45s ease; }
+
+  /* dark reading theme */
+  .reader.dark-mode{ background:#1b1420; color:#ece3d8; }
+  .reader.dark-mode .reader-header,
+  .reader.dark-mode .reader-footer{ background:#241a2b; border-color:rgba(201,166,107,.16); }
+  .reader.dark-mode .reader-header h3{ color:#f2e9d8; }
+  .reader.dark-mode .reader-header .chap-name{ color:#b6a6ae; }
+  .reader.dark-mode .reader-close{ color:#cdbcc4; }
+  .reader.dark-mode .chapter-title{ color:#f2e9d8; }
+  .reader.dark-mode .chapter-content{ color:#e6dcd0; }
+  .reader.dark-mode .no-chapters{ color:#a99aa2; }
+  .reader.dark-mode .reader-theme-btn{ border-color:rgba(201,166,107,.3); color:#e3cfa0; }
+  .reader.dark-mode .chapter-select{ background:#241a2b; color:#f2e9d8; border-color:rgba(201,166,107,.25); }
+  .reader.dark-mode .nav-btn{ background:var(--gold); color:#241a2b; }
+  .reader.dark-mode .reader-progress{ background:rgba(255,255,255,.07); }
+
   /* toast */
   .toast{
     position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
@@ -405,9 +440,111 @@
     .shelf-grid{ grid-template-columns:repeat(auto-fill, minmax(140px,1fr)); }
     .cover{ height:210px; padding:16px 14px; }
   }
+
+  /* ---------- intro ---------- */
+  #introOverlay{
+    position:fixed; inset:0; z-index:999;
+    background: radial-gradient(ellipse at center, #34263c 0%, #180f1e 72%);
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column;
+    overflow:hidden;
+    cursor:pointer;
+    transition:opacity .9s ease;
+  }
+  #introOverlay.hide{ opacity:0; pointer-events:none; }
+
+  .intro-mote{
+    position:absolute;
+    bottom:-6vh;
+    border-radius:50%;
+    background:var(--gold);
+    opacity:.5;
+    filter:blur(.3px);
+    animation-name:moteRise;
+    animation-timing-function:linear;
+    animation-iteration-count:infinite;
+  }
+  @keyframes moteRise{
+    0%{ transform:translateY(0) translateX(0); opacity:0; }
+    12%{ opacity:.6; }
+    100%{ transform:translateY(-108vh) translateX(var(--drift,20px)); opacity:0; }
+  }
+
+  .intro-content{
+    text-align:center;
+    position:relative;
+    z-index:2;
+    padding:0 24px;
+    animation:introZoom 1.3s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes introZoom{
+    from{ opacity:0; transform:scale(.85) translateY(14px); }
+    to{ opacity:1; transform:scale(1) translateY(0); }
+  }
+
+  .intro-icon{
+    font-size:46px;
+    margin-bottom:16px;
+    display:inline-block;
+    animation:introFloat 3s ease-in-out infinite;
+  }
+  @keyframes introFloat{
+    0%,100%{ transform:translateY(0) rotate(-2deg); }
+    50%{ transform:translateY(-9px) rotate(2deg); }
+  }
+
+  .intro-brand{
+    font-family:'Noto Serif Thai', serif;
+    font-weight:700;
+    font-size:clamp(2.4rem, 8vw, 4.4rem);
+    letter-spacing:.12em;
+    color:var(--paper);
+    text-shadow:0 0 34px rgba(201,166,107,.4);
+  }
+  .intro-x{ color:var(--gold); font-weight:400; margin:0 4px; }
+
+  .intro-brand-sub{
+    margin-top:16px;
+    font-size:clamp(.92rem, 2.3vw, 1.08rem);
+    color:var(--gold-soft);
+    letter-spacing:.03em;
+    opacity:0;
+    animation:introFadeUp .9s ease .5s forwards;
+  }
+  @keyframes introFadeUp{
+    from{ opacity:0; transform:translateY(8px); }
+    to{ opacity:.9; transform:translateY(0); }
+  }
+
+  .intro-loading{ margin-top:38px; display:flex; justify-content:center; gap:9px; }
+  .intro-loading span{
+    width:8px; height:8px; border-radius:50%; background:var(--gold);
+    animation:introBounce 1s infinite;
+  }
+  .intro-loading span:nth-child(2){ animation-delay:.15s; }
+  .intro-loading span:nth-child(3){ animation-delay:.3s; }
+  @keyframes introBounce{
+    0%,100%{ transform:translateY(0); opacity:.5; }
+    50%{ transform:translateY(-8px); opacity:1; }
+  }
+
+  .intro-skip{
+    margin-top:34px; font-size:.7rem; color:#8a7d84; letter-spacing:.1em;
+    opacity:0; animation:introFadeUp .9s ease 1.1s forwards;
+  }
 </style>
 </head>
 <body>
+
+<div id="introOverlay" aria-hidden="true">
+  <div class="intro-content">
+    <div class="intro-icon">📖</div>
+    <div class="intro-brand">NOVELS<span class="intro-x">×</span></div>
+    <div class="intro-brand-sub">บริษัทวัดสะอาด ท่านญา กับ คุณชายอ้วน</div>
+    <div class="intro-loading"><span></span><span></span><span></span></div>
+    <div class="intro-skip">แตะที่ใดก็ได้เพื่อข้าม</div>
+  </div>
+</div>
 
 <header class="site-header">
   <div class="brand">
@@ -443,9 +580,14 @@
         <h3 id="readerNovelTitle">—</h3>
         <div class="chap-name" id="readerChapterLabel">—</div>
       </div>
+      <button class="reader-theme-btn" id="readerThemeBtn" type="button">
+        <svg id="readerThemeIcon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+        <span id="readerThemeLabel">ธีมมืด</span>
+      </button>
       <button class="reader-close" id="closeReaderBtn" aria-label="ปิด">✕</button>
     </div>
-    <div class="reader-body">
+    <div class="reader-progress"><div class="reader-progress-bar" id="readerProgressBar"></div></div>
+    <div class="reader-body" id="readerBody">
       <div id="readerContentWrap">
         <h4 class="chapter-title" id="readerChapterTitle"></h4>
         <p class="chapter-content" id="readerChapterContent"></p>
@@ -468,404 +610,4 @@
     <div class="lock-seal">
       <svg viewBox="0 0 24 24"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5zm0 2a3 3 0 0 1 3 3v3H9V6a3 3 0 0 1 3-3zm0 10a1.6 1.6 0 0 1 .9 2.9l.3 1.9h-2.4l.3-1.9A1.6 1.6 0 0 1 12 13z"/></svg>
     </div>
-    <div class="lock-title display">พื้นที่เจ้าของเว็บ</div>
-    <div class="lock-sub">กรอกรหัสผ่านเพื่อเปิดผนึกและจัดการนิยาย</div>
-    <form id="lockForm">
-      <div class="field">
-        <label for="lockPassword">รหัสผ่าน</label>
-        <input type="password" id="lockPassword" inputmode="numeric" autocomplete="off" placeholder="••••••">
-      </div>
-      <button type="submit" class="btn btn-primary">เปิดผนึก</button>
-      <div class="lock-error" id="lockError"></div>
-    </form>
-  </div>
-</div>
-
-<!-- ADMIN OVERLAY -->
-<div class="overlay" id="adminOverlay">
-  <div class="panel admin-panel">
-    <button class="panel-close" id="closeAdminBtn" aria-label="ปิด">✕</button>
-    <div class="lock-title display" style="text-align:left; margin-bottom:2px;">จัดการนิยาย</div>
-    <div class="lock-sub" style="text-align:left; margin-bottom:14px;">เพิ่มเรื่องใหม่ อัปตอน หรือจัดการเรื่องที่มีอยู่</div>
-
-    <div style="background:rgba(201,166,107,.08); border:1px solid rgba(201,166,107,.25); border-radius:8px; padding:12px 14px; margin-bottom:18px; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-      <span style="font-size:.8rem; color:#d8c9a6; line-height:1.5;">การแก้ไขจะถูกเก็บไว้ในเบราว์เซอร์นี้ก่อน<br>กด "ดาวน์โหลด" แล้วเอาไฟล์ไปอัปทับบน GitHub เพื่อให้ทุกคนเห็น</span>
-      <button type="button" class="btn btn-ghost btn-sm" id="downloadJsonBtn" style="white-space:nowrap;">⬇ ดาวน์โหลด novels.json</button>
-    </div>
-
-    <div class="admin-tabs">
-      <button class="admin-tab active" data-tab="new">+ เรื่องใหม่</button>
-      <button class="admin-tab" data-tab="manage">จัดการเรื่องเดิม</button>
-    </div>
-
-    <!-- new novel form -->
-    <div class="admin-view active" id="tabNew">
-      <form id="newNovelForm">
-        <div class="field">
-          <label for="nvTitle">ชื่อเรื่อง *</label>
-          <input type="text" id="nvTitle" required placeholder="เช่น ผลิบานในสายลม">
-        </div>
-        <div class="field">
-          <label for="nvGenre">แนวเรื่อง</label>
-          <input type="text" id="nvGenre" placeholder="เช่น แฟนตาซี, ดราม่า, สืบสวน">
-        </div>
-        <div class="field">
-          <label for="nvSynopsis">เรื่องย่อ</label>
-          <textarea id="nvSynopsis" placeholder="เกริ่นเรื่องคร่าว ๆ ให้ผู้อ่านเห็นภาพ"></textarea>
-        </div>
-        <div class="field">
-          <label for="nvChapTitle">ชื่อตอนแรก</label>
-          <input type="text" id="nvChapTitle" placeholder="เช่น ตอนที่ 1: จุดเริ่มต้น">
-        </div>
-        <div class="field">
-          <label for="nvChapContent">เนื้อหาตอนแรก</label>
-          <textarea id="nvChapContent" style="min-height:160px" placeholder="เขียนเนื้อหาตอนแรกที่นี่ (จะเพิ่มตอนต่อ ๆ ไปได้ในแท็บ 'จัดการเรื่องเดิม')"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">เผยแพร่เรื่องใหม่</button>
-      </form>
-    </div>
-
-    <!-- manage existing -->
-    <div class="admin-view" id="tabManage">
-      <div id="adminList"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ADD CHAPTER (nested) -->
-<div class="overlay" id="chapterOverlay">
-  <div class="panel" style="max-width:480px;">
-    <button class="panel-close" id="closeChapterBtn" aria-label="ปิด">✕</button>
-    <div class="lock-title display" style="text-align:left;">เพิ่มตอนใหม่</div>
-    <div class="lock-sub" style="text-align:left; margin-bottom:18px;" id="chapterNovelName">—</div>
-    <form id="newChapterForm">
-      <div class="field">
-        <label for="chTitle">ชื่อตอน</label>
-        <input type="text" id="chTitle" placeholder="เช่น ตอนที่ 2: จุดหักเห">
-      </div>
-      <div class="field">
-        <label for="chContent">เนื้อหา</label>
-        <textarea id="chContent" style="min-height:180px" placeholder="เขียนเนื้อหาตอนนี้"></textarea>
-      </div>
-      <button type="submit" class="btn btn-primary">เพิ่มตอน</button>
-    </form>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-(function(){
-  const STORAGE_KEY = 'shelf-novels-v1';
-  const PASSWORD = '210451';
-  const COVER_PALETTES = [
-    ['#3f5e56','#2c4239'], ['#7c3b3b','#5e2b2b'], ['#4a3f6b','#352b52'],
-    ['#8a6a2f','#6b501f'], ['#2f5a72','#213f52'], ['#6b3f5e','#4c2c43']
-  ];
-
-  let novels = [];
-  let isUnlocked = false;
-  let readerState = { novelId:null, chapterIndex:0 };
-  let chapterTargetNovelId = null;
-
-  const $ = (sel) => document.querySelector(sel);
-  const shelfGrid = $('#shelfGrid');
-  const shelfCount = $('#shelfCount');
-
-  function paletteFor(str){
-    let h = 0;
-    for (let i=0;i<str.length;i++) h = str.charCodeAt(i) + ((h<<5)-h);
-    return COVER_PALETTES[Math.abs(h) % COVER_PALETTES.length];
-  }
-
-  function showToast(msg){
-    const t = $('#toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(t._timer);
-    t._timer = setTimeout(()=> t.classList.remove('show'), 2600);
-  }
-
-  function escapeHtml(str){
-    return (str||'').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
-  }
-
-  // ---------- storage ----------
-  // ข้อมูลตั้งต้นมาจากไฟล์ novels.json (ต้องวางไว้โฟลเดอร์เดียวกับ html นี้)
-  // ทุกการแก้ไขจะถูกบันทึกลง localStorage ทันที เพื่อไม่ให้หายเวลารีเฟรชหน้า
-  // เมื่อพร้อมแล้วให้กด "ดาวน์โหลด novels.json" ในหน้าจัดการ แล้วเอาไฟล์ไปอัปทับบน GitHub
-  async function loadNovels(){
-    let fileData = [];
-    try{
-      const res = await fetch('novels.json', { cache: 'no-store' });
-      if (res.ok) fileData = await res.json();
-    }catch(e){ /* ไม่มีไฟล์ก็ไม่เป็นไร เริ่มจากค่าว่าง */ }
-
-    let localData = null;
-    try{
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) localData = JSON.parse(raw);
-    }catch(e){ localData = null; }
-
-    // ใช้ข้อมูลจาก localStorage ถ้ามี (คืองานที่แก้ไขล่าสุดที่ยังไม่ได้ส่งไฟล์ทับ)
-    // ไม่งั้นค่อยใช้ข้อมูลจาก novels.json ที่โหลดมา
-    novels = localData !== null ? localData : fileData;
-    renderShelf();
-  }
-
-  function saveNovels(){
-    try{
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(novels));
-    }catch(e){
-      showToast('บันทึกลงเครื่องไม่สำเร็จ');
-    }
-  }
-
-  function downloadNovelsJson(){
-    const blob = new Blob([JSON.stringify(novels, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'novels.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast('ดาวน์โหลด novels.json แล้ว — อย่าลืมอัปทับไฟล์เดิมบน GitHub');
-  }
-
-  // ---------- shelf render ----------
-  function renderShelf(){
-    shelfGrid.innerHTML = '';
-    if (!novels.length){
-      shelfGrid.innerHTML = `
-        <div class="empty-state">
-          <div class="display">ชั้นหนังสือยังว่างอยู่</div>
-          <div>เจ้าของเว็บยังไม่ได้วางเรื่องใดไว้บนชั้นนี้ กลับมาดูใหม่อีกครั้ง</div>
-        </div>`;
-      shelfCount.textContent = '0 เรื่อง';
-      return;
-    }
-    shelfCount.textContent = novels.length + ' เรื่อง';
-    novels.forEach(nv => {
-      const [c1,c2] = paletteFor(nv.title || nv.id);
-      const chapCount = (nv.chapters||[]).length;
-      const btn = document.createElement('button');
-      btn.className = 'book';
-      btn.innerHTML = `
-        <div class="cover" style="background:linear-gradient(155deg, ${c1}, ${c2});">
-          <span class="genre-tag">${escapeHtml(nv.genre || 'นิยาย')}</span>
-          <div>
-            <div class="cover-title">${escapeHtml(nv.title)}</div>
-            <div class="cover-meta">${chapCount} ตอน</div>
-          </div>
-        </div>
-        <div class="book-caption">${escapeHtml(nv.synopsis || '').slice(0,64)}${(nv.synopsis||'').length>64?'…':''}
-          <span class="author">โดยเจ้าของเว็บ</span>
-        </div>`;
-      btn.addEventListener('click', () => openReader(nv.id, 0));
-      shelfGrid.appendChild(btn);
-    });
-  }
-
-  // ---------- reader ----------
-  function openReader(novelId, chapterIndex){
-    readerState = { novelId, chapterIndex };
-    renderReader();
-    $('#readerOverlay').classList.add('open');
-  }
-  function renderReader(){
-    const nv = novels.find(n => n.id === readerState.novelId);
-    if (!nv) return;
-    $('#readerNovelTitle').textContent = nv.title;
-    const chapters = nv.chapters || [];
-    const sel = $('#chapterSelect');
-    sel.innerHTML = '';
-    chapters.forEach((c,i) => {
-      const opt = document.createElement('option');
-      opt.value = i;
-      opt.textContent = c.title || ('ตอนที่ ' + (i+1));
-      sel.appendChild(opt);
-    });
-    sel.value = readerState.chapterIndex;
-
-    if (!chapters.length){
-      $('#readerChapterLabel').textContent = 'ยังไม่มีตอน';
-      $('#readerContentWrap').innerHTML = '<div class="no-chapters">เรื่องนี้ยังไม่มีตอนให้อ่าน</div>';
-    } else {
-      const chap = chapters[readerState.chapterIndex] || chapters[0];
-      $('#readerChapterLabel').textContent = chap.title || ('ตอนที่ ' + (readerState.chapterIndex+1));
-      $('#readerChapterTitle').textContent = chap.title || ('ตอนที่ ' + (readerState.chapterIndex+1));
-      $('#readerChapterContent').textContent = chap.content || '';
-    }
-    $('#prevChapBtn').disabled = readerState.chapterIndex <= 0;
-    $('#nextChapBtn').disabled = readerState.chapterIndex >= chapters.length - 1;
-  }
-
-  $('#chapterSelect').addEventListener('change', (e) => {
-    readerState.chapterIndex = parseInt(e.target.value, 10);
-    renderReader();
-  });
-  $('#prevChapBtn').addEventListener('click', () => {
-    if (readerState.chapterIndex > 0){ readerState.chapterIndex--; renderReader(); }
-  });
-  $('#nextChapBtn').addEventListener('click', () => {
-    const nv = novels.find(n => n.id === readerState.novelId);
-    if (nv && readerState.chapterIndex < (nv.chapters||[]).length - 1){ readerState.chapterIndex++; renderReader(); }
-  });
-  $('#closeReaderBtn').addEventListener('click', () => $('#readerOverlay').classList.remove('open'));
-
-  // ---------- lock ----------
-  $('#openLockBtn').addEventListener('click', () => {
-    if (isUnlocked){ openAdminPanel(); return; }
-    $('#lockPassword').value = '';
-    $('#lockError').textContent = '';
-    $('#lockOverlay').classList.add('open');
-    setTimeout(()=> $('#lockPassword').focus(), 50);
-  });
-  $('#closeLockBtn').addEventListener('click', () => $('#lockOverlay').classList.remove('open'));
-
-  $('#lockForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const val = $('#lockPassword').value.trim();
-    if (val === PASSWORD){
-      isUnlocked = true;
-      $('#lockOverlay').classList.remove('open');
-      openAdminPanel();
-    } else {
-      $('#lockError').textContent = 'รหัสผ่านไม่ถูกต้อง ลองอีกครั้ง';
-    }
-  });
-
-  // ---------- admin panel ----------
-  function openAdminPanel(){
-    renderAdminList();
-    $('#adminOverlay').classList.add('open');
-  }
-  $('#closeAdminBtn').addEventListener('click', () => $('#adminOverlay').classList.remove('open'));
-  $('#downloadJsonBtn').addEventListener('click', downloadNovelsJson);
-
-  document.querySelectorAll('.admin-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.admin-view').forEach(v => v.classList.remove('active'));
-      tab.classList.add('active');
-      $('#tab' + (tab.dataset.tab === 'new' ? 'New' : 'Manage')).classList.add('active');
-      if (tab.dataset.tab === 'manage') renderAdminList();
-    });
-  });
-
-  $('#newNovelForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const title = $('#nvTitle').value.trim();
-    if (!title){ showToast('กรุณากรอกชื่อเรื่อง'); return; }
-    const chapTitle = $('#nvChapTitle').value.trim();
-    const chapContent = $('#nvChapContent').value.trim();
-    const nv = {
-      id: 'nv_' + Date.now() + '_' + Math.random().toString(36).slice(2,7),
-      title,
-      genre: $('#nvGenre').value.trim(),
-      synopsis: $('#nvSynopsis').value.trim(),
-      chapters: chapContent ? [{ title: chapTitle || 'ตอนที่ 1', content: chapContent }] : []
-    };
-    novels.unshift(nv);
-    saveNovels();
-    renderShelf();
-    $('#newNovelForm').reset();
-    showToast('เผยแพร่ "' + title + '" แล้ว');
-  });
-
-  function renderAdminList(){
-    const wrap = $('#adminList');
-    if (!novels.length){
-      wrap.innerHTML = '<div class="lock-sub" style="text-align:left;">ยังไม่มีเรื่องในระบบ ลองเพิ่มเรื่องใหม่ที่แท็บด้านซ้าย</div>';
-      return;
-    }
-    wrap.innerHTML = '';
-    novels.forEach(nv => {
-      const item = document.createElement('div');
-      item.className = 'admin-list-item';
-      const chaptersHtml = (nv.chapters||[]).map((c,i) => `
-        <div class="chapter-row">
-          <span>${escapeHtml(c.title || ('ตอนที่ '+(i+1)))}</span>
-          <button class="btn btn-ghost btn-sm" data-del-chap="${nv.id}|${i}">ลบตอน</button>
-        </div>`).join('') || '<div class="chapter-row"><span>ยังไม่มีตอน</span><span></span></div>';
-
-      item.innerHTML = `
-        <div class="info" style="flex:1;">
-          <h4>${escapeHtml(nv.title)}</h4>
-          <p>${(nv.chapters||[]).length} ตอน · ${escapeHtml(nv.genre || 'ไม่ระบุแนว')}</p>
-          <div style="margin-top:8px;">${chaptersHtml}</div>
-        </div>
-        <div class="actions">
-          <button class="btn btn-ghost btn-sm" data-addchap="${nv.id}">+ เพิ่มตอน</button>
-          <button class="btn btn-danger btn-sm" data-delnovel="${nv.id}">ลบเรื่อง</button>
-        </div>`;
-      wrap.appendChild(item);
-    });
-
-    wrap.querySelectorAll('[data-addchap]').forEach(btn => {
-      btn.addEventListener('click', () => openChapterModal(btn.dataset.addchap));
-    });
-    wrap.querySelectorAll('[data-delnovel]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const nv = novels.find(n => n.id === btn.dataset.delnovel);
-        if (!nv) return;
-        if (!confirm('ลบเรื่อง "' + nv.title + '" ทั้งหมด?')) return;
-        novels = novels.filter(n => n.id !== nv.id);
-        saveNovels();
-        renderShelf(); renderAdminList();
-        showToast('ลบเรื่องแล้ว');
-      });
-    });
-    wrap.querySelectorAll('[data-del-chap]').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const [novelId, idxStr] = btn.dataset.delChap.split('|');
-        const idx = parseInt(idxStr, 10);
-        const nv = novels.find(n => n.id === novelId);
-        if (!nv) return;
-        nv.chapters.splice(idx, 1);
-        saveNovels();
-        renderShelf(); renderAdminList();
-        showToast('ลบตอนแล้ว');
-      });
-    });
-  }
-
-  // ---------- add chapter modal ----------
-  function openChapterModal(novelId){
-    chapterTargetNovelId = novelId;
-    const nv = novels.find(n => n.id === novelId);
-    $('#chapterNovelName').textContent = nv ? ('สำหรับเรื่อง: ' + nv.title) : '';
-    $('#chTitle').value = '';
-    $('#chContent').value = '';
-    $('#chapterOverlay').classList.add('open');
-  }
-  $('#closeChapterBtn').addEventListener('click', () => $('#chapterOverlay').classList.remove('open'));
-  $('#newChapterForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const nv = novels.find(n => n.id === chapterTargetNovelId);
-    if (!nv) return;
-    const content = $('#chContent').value.trim();
-    if (!content){ showToast('กรุณากรอกเนื้อหาตอน'); return; }
-    nv.chapters = nv.chapters || [];
-    nv.chapters.push({ title: $('#chTitle').value.trim() || ('ตอนที่ ' + (nv.chapters.length+1)), content });
-    saveNovels();
-    $('#chapterOverlay').classList.remove('open');
-    renderShelf(); renderAdminList();
-    showToast('เพิ่มตอนใหม่แล้ว');
-  });
-
-  // close overlays on backdrop click
-  document.querySelectorAll('.overlay').forEach(ov => {
-    ov.addEventListener('click', (e) => { if (e.target === ov) ov.classList.remove('open'); });
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') document.querySelectorAll('.overlay.open').forEach(ov => ov.classList.remove('open'));
-  });
-
-  loadNovels();
-})();
-</script>
-</body>
-</html>
+    <div 
